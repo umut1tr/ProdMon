@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ProdMon.Infrastructure.Data;
-using ProdMon.Infrastructure.Services;
 
 namespace ProdMon.Infrastructure
 {

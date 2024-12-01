@@ -1,20 +1,24 @@
-﻿
-using ProdMon.Infrastructure.Data;
+﻿using ProdMon.Infrastructure.Data;
 
-namespace ProdMon.Infrastructure.Services
+public class DatabaseCheckService
 {
-    public class DatabaseCheckService
+    private readonly ProdMonDbContext _context;
+
+    public DatabaseCheckService(ProdMonDbContext context)
     {
-        private readonly ProdMonDbContext _context;
+        _context = context;
+    }
 
-        public DatabaseCheckService(ProdMonDbContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<bool> CanConnectAsync()
+    public async Task<bool> CanConnectAsync()
+    {
+        try
         {
             return await _context.Database.CanConnectAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error connecting to the database: {ex.Message}");
+            return false;
         }
     }
 }
