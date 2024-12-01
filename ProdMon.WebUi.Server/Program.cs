@@ -7,8 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+// Register Application and Infrastructure services
 builder.Services.AddApplication();
-builder.Services.AddInfrastructure();
+builder.Services.AddInfrastructure(builder.Configuration.GetConnectionString("DefaultConnection"));
 
 var app = builder.Build();
 

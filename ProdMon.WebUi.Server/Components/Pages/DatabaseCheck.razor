@@ -1,0 +1,27 @@
+﻿
+@page "/DatabaseCheck"
+@inject ProdMon.Infrastructure.Services.DatabaseCheckService DatabaseCheckService
+
+<h3>Database Connection Status</h3>
+
+@if (isDatabaseConnected == null)
+{
+    <p>Checking database connection...</p>
+}
+else if (isDatabaseConnected == true)
+{
+    <p style="color:green;">Database is connected!</p>
+}
+else
+{
+    <p style="color:red;">Failed to connect to the database.</p>
+}
+
+@code {
+    private bool? isDatabaseConnected;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isDatabaseConnected = await DatabaseCheckService.CanConnectAsync();
+    }
+}
