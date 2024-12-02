@@ -19,4 +19,8 @@
     <ProjectReference Include="..\ProdMon.Application\ProdMon.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProdMon.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class UpdateDmcKeyToLong : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -28,16 +28,16 @@ namespace ProdMon.Infrastructure.Migrations
                 name: "MonitorEntries",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Dmc = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Dmc = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Quality = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Quality = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CheckPointId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MonitorEntries", x => x.Id);
+                    table.PrimaryKey("PK_MonitorEntries", x => x.Dmc);
                 });
         }
 

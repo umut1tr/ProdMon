@@ -12,8 +12,8 @@ using ProdMon.Infrastructure.Data;
 namespace ProdMon.Infrastructure.Migrations
 {
     [DbContext(typeof(ProdMonDbContext))]
-    [Migration("20241201204904_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20241202085512_UpdateDmcKeyToLong")]
+    partial class UpdateDmcKeyToLong
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,17 +44,16 @@ namespace ProdMon.Infrastructure.Migrations
 
             modelBuilder.Entity("ProdMon.Domain.Models.MonitorEntry", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Dmc")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Dmc"));
+
+                    b.Property<int>("CheckPointId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Dmc")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -65,7 +64,7 @@ namespace ProdMon.Infrastructure.Migrations
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Id");
+                    b.HasKey("Dmc");
 
                     b.ToTable("MonitorEntries");
                 });
