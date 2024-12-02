@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ProdMon.Application\ProdMon.Application.csproj" />
     <ProjectReference Include="..\ProdMon.Infrastructure\ProdMon.Infrastructure.csproj" />
   </ItemGroup>
 

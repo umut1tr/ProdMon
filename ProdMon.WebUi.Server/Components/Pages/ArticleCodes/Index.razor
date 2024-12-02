@@ -7,37 +7,35 @@
 
 <h3>Application Codes</h3>
 
-<div>
-    @if (ArticleCodes == null)
-    {
-        <p>Loading...</p>
-    }
-    else
-    {
-        <table class="table">
-            <thead>
+@if (ArticleCodes == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Article Number</th>
+                <th>Article Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var article in ArticleCodes)
+            {
                 <tr>
-                    <th>Article Number</th>
-                    <th>Article Description</th>
-                    <th>Actions</th>
+                    <td>@article.ArticleNumber</td>
+                    <td>@article.ArticleDescription</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => EditArticleCode(article.ArticleNumber)">Edit</button>
+                        <button class="btn btn-danger" @onclick="() => ConfirmDelete(article.ArticleNumber)">Delete</button>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach (var article in ArticleCodes)
-                {
-                    <tr>
-                        <td>@article.ArticleNumber</td>
-                        <td>@article.ArticleDescription</td>
-                        <td>
-                            <button class="btn btn-primary" @onclick="() => EditArticleCode(article.ArticleNumber)">Edit</button>
-                            <button class="btn btn-danger" @onclick="() => ConfirmDelete(article.ArticleNumber)">Delete</button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-</div>
+            }
+        </tbody>
+    </table>
+}
 
 @code {
     private List<ArticleCode>? ArticleCodes;
@@ -49,7 +47,7 @@
 
     private void EditArticleCode(int id)
     {
-        Navigation.NavigateTo($"/ArticlecCodes/edit/{id}");
+        Navigation.NavigateTo($"/ArticleCodes/edit/{id}");
     }
 
     private async void ConfirmDelete(int id)
