@@ -66,7 +66,7 @@ namespace ProdMon.Application.Services
                 return;
             }
 
-            // Adding a short delay
+            // Adding a short delay after scan happened and file got appended.
             Task.Delay(100).Wait();
 
             using (var scope = _serviceScopeFactory.CreateScope())
@@ -104,7 +104,7 @@ namespace ProdMon.Application.Services
 
                     foreach (var entry in newEntries)
                     {
-                        // entryRepository.AddEntryAsync(entry).Wait(); for test purpose comment out
+                        entryRepository.AddEntryAsync(entry).Wait();
                         _logger.LogInformation("New entry has been saved to the database.");
                     }
                 }
