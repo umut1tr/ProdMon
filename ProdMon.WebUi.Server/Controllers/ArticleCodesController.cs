@@ -1,64 +1,66 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Application.Interfaces;
+﻿using Application.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using ProdMon.Domain.Models;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ProdMon.WebUi.Server.Controllers
+[ApiController]
+[Route("api/[controller]")]
+public class ArticleCodesController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ArticleCodeController : ControllerBase
+    private readonly IArticleCodeRepository _repository;
+
+    public ArticleCodesController(IArticleCodeRepository repository)
     {
-        private readonly IArticleCodeRepository _articleCodeRepository;
+        _repository = repository;
+    }
 
-        public ArticleCodeController(IArticleCodeRepository articleCodeRepository)
+    [HttpGet]
+    public async Task<IActionResult> GetAllArticleCodesAsync()
+    {
+        var articleCodes = await _repository.GetAllAsync();
+        return Ok(articleCodes);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetArticleCodeByIdAsync(int id)
+    {
+        var articleCode = await _repository.GetByIdAsync(id);
+        if (articleCode == null)
         {
-            _articleCodeRepository = articleCodeRepository;
+            return NotFound();
+        }
+        return Ok(articleCode);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AddArticleCodeAsync([FromBody] ArticleCode articleCode)
+    {
+        await _repository.AddAsync(articleCode);
+        return CreatedAtAction(nameof(GetArticleCodeByIdAsync), new { id = articleCode.ArticleNumber }, articleCode);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateArticleCodeAsync(int id, [FromBody] ArticleCode articleCode)
+    {
+        if (id != articleCode.ArticleNumber)
+        {
+            return BadRequest();
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<ArticleCode>>> GetArticleCodes()
+        await _repository.UpdateAsync(articleCode);
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteArticleCodeAsync(int id)
+    {
+        var articleCode = await _repository.GetByIdAsync(id);
+        if (articleCode == null)
         {
-            var articleCodes = await _articleCodeRepository.GetAllArticleCodesAsync();
-            return Ok(articleCodes);
+            return NotFound();
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ArticleCode>> GetArticleCode(int id)
-        {
-            var articleCode = await _articleCodeRepository.GetArticleCodeByIdAsync(id);
-            if (articleCode == null)
-            {
-                return NotFound();
-            }
-            return Ok(articleCode);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<ArticleCode>> PostArticleCode(ArticleCode articleCode)
-        {
-            await _articleCodeRepository.AddArticleCodeAsync(articleCode);
-            return CreatedAtAction(nameof(GetArticleCode), new { id = articleCode.ArticleNumber }, articleCode);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutArticleCode(int id, ArticleCode articleCode)
-        {
-            if (id != articleCode.ArticleNumber)
-            {
-                return BadRequest();
-            }
-
-            await _articleCodeRepository.UpdateArticleCodeAsync(articleCode);
-            return NoContent();
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteArticleCode(int id)
-        {
-            await _articleCodeRepository.DeleteArticleCodeAsync(id);
-            return NoContent();
-        }
+        await _repository.DeleteAsync(articleCode);
+        return NoContent();
     }
 }

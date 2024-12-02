@@ -4,10 +4,10 @@ namespace Application.Interfaces
 {
     public interface IArticleCodeRepository
     {
-        Task<IEnumerable<ArticleCode>> GetAllArticleCodesAsync();
-        Task<ArticleCode> GetArticleCodeByIdAsync(int id);
-        Task AddArticleCodeAsync(ArticleCode articleCode);
-        Task UpdateArticleCodeAsync(ArticleCode articleCode);
-        Task DeleteArticleCodeAsync(int id);
+        Task<List<ArticleCode>> GetAllAsync();
+        Task<ArticleCode> GetByIdAsync(int id);
+        Task AddAsync(ArticleCode articleCode);
+        Task UpdateAsync(ArticleCode articleCode);
+        Task DeleteAsync(ArticleCode articleCode);
     }
 }

@@ -1,49 +1,43 @@
 ﻿using Application.Interfaces;
-using ProdMon.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using ProdMon.Domain.Models;
 using ProdMon.Infrastructure.Data;
 
-namespace Infrastructure.Repositories
+
+public class ArticleCodeRepository : IArticleCodeRepository
 {
-    public class ArticleCodeRepository : IArticleCodeRepository
+    private readonly ProdMonDbContext _context;
+
+    public ArticleCodeRepository(ProdMonDbContext context)
     {
-        private readonly ProdMonDbContext _context;
+        _context = context;
+    }
 
-        public ArticleCodeRepository(ProdMonDbContext context)
-        {
-            _context = context;
-        }
+    public async Task<List<ArticleCode>> GetAllAsync()
+    {
+        return await _context.ArticleCodes.ToListAsync();
+    }
 
-        public async Task<IEnumerable<ArticleCode>> GetAllArticleCodesAsync()
-        {
-            return await _context.ArticleCodes.ToListAsync();
-        }
+    public async Task<ArticleCode> GetByIdAsync(int id)
+    {
+        return await _context.ArticleCodes.FindAsync(id);
+    }
 
-        public async Task<ArticleCode> GetArticleCodeByIdAsync(int id)
-        {
-            return await _context.ArticleCodes.FindAsync(id);
-        }
+    public async Task AddAsync(ArticleCode articleCode)
+    {
+        await _context.ArticleCodes.AddAsync(articleCode);
+        await _context.SaveChangesAsync();
+    }
 
-        public async Task AddArticleCodeAsync(ArticleCode articleCode)
-        {
-            _context.ArticleCodes.Add(articleCode);
-            await _context.SaveChangesAsync();
-        }
+    public async Task UpdateAsync(ArticleCode articleCode)
+    {
+        _context.ArticleCodes.Update(articleCode);
+        await _context.SaveChangesAsync();
+    }
 
-        public async Task UpdateArticleCodeAsync(ArticleCode articleCode)
-        {
-            _context.Entry(articleCode).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteArticleCodeAsync(int id)
-        {
-            var articleCode = await _context.ArticleCodes.FindAsync(id);
-            if (articleCode != null)
-            {
-                _context.ArticleCodes.Remove(articleCode);
-                await _context.SaveChangesAsync();
-            }
-        }
+    public async Task DeleteAsync(ArticleCode articleCode)
+    {
+        _context.ArticleCodes.Remove(articleCode);
+        await _context.SaveChangesAsync();
     }
 }

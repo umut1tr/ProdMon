@@ -1,10 +1,11 @@
 ﻿@page "/ArticleCodes/Index"
-@using Microsoft.EntityFrameworkCore
+@using global::Application.Interfaces
 @using Microsoft.JSInterop
 @using ProdMon.Infrastructure.Data
 @using ProdMon.Domain.Models
-@inject ProdMonDbContext DbContext
+@inject IArticleCodeRepository ArticleCodeRepository
 @inject NavigationManager Navigation
+@inject IJSRuntime JsRuntime
 
 <h3>Application Codes</h3>
 
@@ -43,7 +44,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        ArticleCodes = await DbContext.ArticleCodes.ToListAsync();
+        ArticleCodes = await ArticleCodeRepository.GetAllAsync();
     }
 
     private void EditArticleCode(int id)
@@ -56,17 +57,13 @@ else
         bool isConfirmed = await JsRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete ArticleCode with ID {id}?");
         if (isConfirmed)
         {
-            var articleCode = await DbContext.ArticleCodes.FindAsync(id);
+            var articleCode = await ArticleCodeRepository.GetByIdAsync(id);
             if (articleCode != null)
             {
-                DbContext.ArticleCodes.Remove(articleCode);
-                await DbContext.SaveChangesAsync();
-                ArticleCodes = await DbContext.ArticleCodes.ToListAsync(); // Refresh the list
+                await ArticleCodeRepository.DeleteAsync(articleCode);
+                ArticleCodes = await ArticleCodeRepository.GetAllAsync(); // Refresh the list
                 StateHasChanged(); // Notify Blazor to re-render
             }
         }
     }
-
-    [Inject]
-    private IJSRuntime JsRuntime { get; set; }
 }
