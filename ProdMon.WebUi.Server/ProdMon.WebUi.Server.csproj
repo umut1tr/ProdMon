@@ -29,4 +29,8 @@
     <ProjectReference Include="..\ProdMon.Infrastructure\ProdMon.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\MonitorEntries\" />
+  </ItemGroup>
+
 </Project>
