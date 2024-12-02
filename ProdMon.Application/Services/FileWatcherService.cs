@@ -1,30 +1,42 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using ProdMon.Application.Interfaces;
 using ProdMon.Domain.Models;
+using Newtonsoft.Json;
+using Application.Interfaces;
 
-namespace Application.Services
+namespace ProdMon.Application.Services
 {
-    public class FileWatcherService : IHostedService
+    public class FileWatcherService : IFileWatcherService, IHostedService
     {
         private readonly string _filePath;
         private readonly string _lastCheckedFilePath;
         private readonly ILogger<FileWatcherService> _logger;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
         private FileSystemWatcher _watcher;
 
-        public FileWatcherService(string filePath, string lastCheckedFilePath, ILogger<FileWatcherService> logger)
+        public FileWatcherService(string filePath, string lastCheckedFilePath, ILogger<FileWatcherService> logger, IServiceScopeFactory serviceScopeFactory)
         {
             _filePath = filePath;
             _lastCheckedFilePath = lastCheckedFilePath;
             _logger = logger;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
+            // Ensure the directory exists
+            if (!Directory.Exists(Path.GetDirectoryName(_filePath)))
+            {
+                throw new ArgumentException($"The directory name '{Path.GetDirectoryName(_filePath)}' does not exist.");
+            }
+
             _watcher = new FileSystemWatcher
             {
                 Path = Path.GetDirectoryName(_filePath),
@@ -54,32 +66,52 @@ namespace Application.Services
                 return;
             }
 
-            try
+            // Adding a short delay
+            Task.Delay(100).Wait();
+
+            using (var scope = _serviceScopeFactory.CreateScope())
             {
-                DateTime lastCheckedTime = LoadLastCheckedTime();
-                string jsonContent = File.ReadAllText(_filePath);
-                List<MonitorEntry> entries = JsonConvert.DeserializeObject<List<MonitorEntry>>(jsonContent);
+                var entryRepository = scope.ServiceProvider.GetRequiredService<IEntryRepository>();
 
-                foreach (var entry in entries)
+                try
                 {
-                    if (entry.Timestamp > lastCheckedTime)
+                    DateTime lastCheckedTime = LoadLastCheckedTime();
+                    string jsonContent = File.ReadAllText(_filePath);
+                    List<MonitorEntry> entries = JsonConvert.DeserializeObject<List<MonitorEntry>>(jsonContent);
+
+                    var newEntries = new List<MonitorEntry>();
+
+                    foreach (var entry in entries)
                     {
-                        _logger.LogInformation($"Timestamp: {entry.Timestamp}");
-                        _logger.LogInformation($"Dmc: {entry.Dmc}");
-                        _logger.LogInformation($"Description: {entry.Description}");
-                        _logger.LogInformation($"Quality: {entry.Quality}");
+                        if (entry.Timestamp == default(DateTime))
+                        {
+                            _logger.LogError($"Invalid Timestamp for entry with Dmc: {entry.Dmc}");
+                            continue;
+                        }
 
-                        string articleNumber = ExtractArticleNumber(entry.Dmc);
-                        _logger.LogInformation($"Extracted Article Number: {articleNumber}\n");
+                        if (entry.Timestamp > lastCheckedTime)
+                        {
+                            _logger.LogInformation($"Timestamp: {entry.Timestamp}");
+                            _logger.LogInformation($"Dmc: {entry.Dmc}");
+                            _logger.LogInformation($"Description: {entry.Description}");
+                            _logger.LogInformation($"Quality: {entry.Quality}");
 
-                        lastCheckedTime = entry.Timestamp;
-                        SaveLastCheckedTime(lastCheckedTime);
+                            newEntries.Add(entry);
+                            lastCheckedTime = entry.Timestamp;
+                            SaveLastCheckedTime(lastCheckedTime);
+                        }
+                    }
+
+                    foreach (var entry in newEntries)
+                    {
+                        // entryRepository.AddEntryAsync(entry).Wait(); for test purpose comment out
+                        _logger.LogInformation("New entry has been saved to the database.");
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error processing file: {ex.Message}");
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error processing file: {ex.Message}");
+                }
             }
         }
 
@@ -99,20 +131,9 @@ namespace Application.Services
             return false;
         }
 
-        private string ExtractArticleNumber(long dmc)
-        {
-            string articleNumber = "55322234";
-            string dmcStr = dmc.ToString();
-            if (dmcStr.Contains(articleNumber))
-            {
-                return articleNumber;
-            }
-            return "Article Number not found";
-        }
-
         private void SaveLastCheckedTime(DateTime lastCheckedTime)
         {
-            File.WriteAllText(_lastCheckedFilePath, lastCheckedTime.ToString("o"));
+            File.WriteAllText(_lastCheckedFilePath, lastCheckedTime.ToString("dd.MM.yyyy HH:mm:ss"));
         }
 
         private DateTime LoadLastCheckedTime()

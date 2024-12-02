@@ -1,20 +1,26 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using ProdMon.Application.Interfaces;
+using ProdMon.Application.Services;
 
 namespace ProdMon.Application
 {
     public static class DependencyInjection
     {
-        // eventuell später MediatR pattern Service hier einbauen.
-
-        public static IServiceCollection AddApplication(this IServiceCollection services)
+        public static IServiceCollection AddApplication(this IServiceCollection services, string filePath, string lastCheckedFilePath)
         {
+            services.AddSingleton<IFileWatcherService>(provider =>
+            {
+                var logger = provider.GetRequiredService<ILogger<FileWatcherService>>();
+                var serviceScopeFactory = provider.GetRequiredService<IServiceScopeFactory>();
+                return new FileWatcherService(filePath, lastCheckedFilePath, logger, serviceScopeFactory);
+            });
+
+            services.AddHostedService(provider => (FileWatcherService)provider.GetRequiredService<IFileWatcherService>());
+
+            // Other service registrations...
+
             return services;
         }
-
     }
 }

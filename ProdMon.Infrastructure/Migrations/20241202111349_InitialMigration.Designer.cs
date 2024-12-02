@@ -12,8 +12,8 @@ using ProdMon.Infrastructure.Data;
 namespace ProdMon.Infrastructure.Migrations
 {
     [DbContext(typeof(ProdMonDbContext))]
-    [Migration("20241202085512_UpdateDmcKeyToLong")]
-    partial class UpdateDmcKeyToLong
+    [Migration("20241202111349_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,11 +44,8 @@ namespace ProdMon.Infrastructure.Migrations
 
             modelBuilder.Entity("ProdMon.Domain.Models.MonitorEntry", b =>
                 {
-                    b.Property<long>("Dmc")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Dmc"));
+                    b.Property<string>("Dmc")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("CheckPointId")
                         .HasColumnType("int");
