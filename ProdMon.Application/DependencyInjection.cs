@@ -18,7 +18,7 @@ namespace ProdMon.Application
 
             services.AddHostedService(provider => (FileWatcherService)provider.GetRequiredService<IFileWatcherService>());
 
-            // Other service registrations...
+            // Other service registrations...            
 
             return services;
         }

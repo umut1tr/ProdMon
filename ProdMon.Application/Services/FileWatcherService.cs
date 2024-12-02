@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using ProdMon.Application.Interfaces;
@@ -142,7 +142,7 @@ namespace ProdMon.Application.Services
                 }
                 catch (Exception e)
                 {
-                    throw (e);
+                    throw;
                 }
             }
             return DateTime.MinValue;
