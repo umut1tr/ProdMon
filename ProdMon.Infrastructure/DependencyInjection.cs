@@ -9,8 +9,7 @@ namespace ProdMon.Infrastructure
     public static class DependencyInjection
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, string connectionString)
-        {
-            
+        {            
 
             services.AddDbContext<ProdMonDbContext>(options =>
                 options.UseSqlServer(connectionString) 
@@ -21,8 +20,10 @@ namespace ProdMon.Infrastructure
 
             // Register the Entry Repo
             services.AddScoped<IEntryRepository, EntryRepository>();
+            services.AddScoped<IArticleCodeRepository, ArticleCodeRepository>();
 
             return services;
         }
     }
 }
+ 

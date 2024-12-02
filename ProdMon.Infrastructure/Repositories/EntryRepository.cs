@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Application.Interfaces;
+﻿using Application.Interfaces;
 using ProdMon.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using ProdMon.Infrastructure.Data;
@@ -21,7 +19,7 @@ namespace Infrastructure.Repositories
             return await _context.MonitorEntries.ToListAsync();
         }
 
-        public async Task<MonitorEntry> GetEntryByIdAsync(string id)  // Changed to string
+        public async Task<MonitorEntry> GetEntryByIdAsync(string id)
         {
             return await _context.MonitorEntries.FindAsync(id);
         }
@@ -38,7 +36,7 @@ namespace Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteEntryAsync(string id)  // Changed to string
+        public async Task DeleteEntryAsync(string id)
         {
             var entry = await _context.MonitorEntries.FindAsync(id);
             if (entry != null)

@@ -25,7 +25,7 @@ namespace ProdMon.WebUi.Server.Controllers
 
         // GET: api/MonitorEntry/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<MonitorEntry>> GetMonitorEntry(string id)  // Changed to string
+        public async Task<ActionResult<MonitorEntry>> GetMonitorEntry(string id)
         {
             var entry = await _entryRepository.GetEntryByIdAsync(id);
             if (entry == null)
@@ -45,7 +45,7 @@ namespace ProdMon.WebUi.Server.Controllers
 
         // PUT: api/MonitorEntry/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMonitorEntry(string id, MonitorEntry entry)  // Changed to string
+        public async Task<IActionResult> PutMonitorEntry(string id, MonitorEntry entry)
         {
             if (id != entry.Dmc)
             {
@@ -58,7 +58,7 @@ namespace ProdMon.WebUi.Server.Controllers
 
         // DELETE: api/MonitorEntry/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMonitorEntry(string id)  // Changed to string
+        public async Task<IActionResult> DeleteMonitorEntry(string id)
         {
             await _entryRepository.DeleteEntryAsync(id);
             return NoContent();

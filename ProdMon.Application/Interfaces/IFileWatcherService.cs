@@ -1,5 +1,4 @@
 ﻿
-
 namespace ProdMon.Application.Interfaces
 {
     public interface IFileWatcherService
