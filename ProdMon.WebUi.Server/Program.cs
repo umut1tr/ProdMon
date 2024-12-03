@@ -3,6 +3,7 @@ using ProdMon.Infrastructure;
 using ProdMon.WebUi.Server.Components;
 using Serilog;
 using Microsoft.EntityFrameworkCore;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +40,9 @@ builder.Services.AddInfrastructure(connectionString);
 
 // Register QuickGrid EntityFramework Adapter
 builder.Services.AddQuickGridEntityFrameworkAdapter();
+
+// Add MudBlazor services services.AddMudServices();
+builder.Services.AddMudServices();
 
 var app = builder.Build();
 
