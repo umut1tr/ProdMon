@@ -55,14 +55,17 @@ namespace ProdMon.Application.Services
 
         private void OnChanged(object source, FileSystemEventArgs e)
         {
+
+            // Adding a short delay after scan happened and file got appended.
+            Task.Delay(500).Wait();
+
             if (IsFileLocked(new FileInfo(_filePath)))
             {
                 _logger.LogInformation($"File {_filePath} is currently in use by another process.");
+                Task.Delay(500).Wait();
                 return;
             }
-
-            // Adding a short delay after scan happened and file got appended.
-            Task.Delay(100).Wait();
+                        
 
             using (var scope = _serviceScopeFactory.CreateScope())
             {
