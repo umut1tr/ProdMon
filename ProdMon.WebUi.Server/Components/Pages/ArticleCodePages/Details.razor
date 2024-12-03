@@ -1,7 +1,8 @@
 ﻿@page "/articlecodes/details"
 @using Microsoft.EntityFrameworkCore
 @using ProdMon.Domain.Models
-@inject IDbContextFactory<ProdMon.Infrastructure.Data.ProdMonDbContext> DbFactory
+@using ProdMon.Infrastructure.Data
+@inject IDbContextFactory<ProdMonDbContext> DbFactory
 @inject NavigationManager NavigationManager
 
 <PageTitle>Details</PageTitle>
