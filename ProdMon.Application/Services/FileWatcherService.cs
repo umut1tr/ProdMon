@@ -24,6 +24,10 @@ namespace ProdMon.Application.Services
             _serviceScopeFactory = serviceScopeFactory;
         }
 
+
+        // Signal fürs FrontEnd zum fetchen neuer Daten
+        public event Action? EntryHasBeenApplied;
+
         public Task StartAsync(CancellationToken cancellationToken)
         {
             // Ensure the directory exists
@@ -56,13 +60,13 @@ namespace ProdMon.Application.Services
         private void OnChanged(object source, FileSystemEventArgs e)
         {
 
-            // Adding a short delay after scan happened and file got appended.
+            // Wait to make sure file is not locked
             Task.Delay(500).Wait();
 
+            // log when file has been locked for debugging purpose to find a good solid foundation of how long to wait with the delay
             if (IsFileLocked(new FileInfo(_filePath)))
             {
-                _logger.LogInformation($"File {_filePath} is currently in use by another process.");
-                Task.Delay(500).Wait();
+                _logger.LogInformation($"File {_filePath} is currently in use by another process.");                
                 return;
             }
                         
@@ -105,6 +109,11 @@ namespace ProdMon.Application.Services
                         entryRepository.AddEntryAsync(entry).Wait();
                         _logger.LogInformation("New entry has been saved to the database.");
                     }
+
+                  
+                    EntryHasBeenApplied?.Invoke(); // fire signal
+                    
+                    
                 }
                 catch (Exception ex)
                 {
