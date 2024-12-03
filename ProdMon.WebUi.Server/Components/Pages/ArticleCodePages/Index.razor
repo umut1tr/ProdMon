@@ -15,24 +15,32 @@
     <a href="articlecodes/create">Create New</a>
 </p>
 
-<QuickGrid Class="table" Items="FilteredArticleCodes" Pagination="state">
-    <PropertyColumn Property="articlecode => articlecode.ArticleNumber" Title="Artikelnummer" Sortable="true">
-        <ColumnOptions>
-            <div>
-                <input type="search" @bind="titleFilter" @bind:event="oninput" autofocus/>
-            </div>
-        </ColumnOptions>
-    </PropertyColumn>
-    <PropertyColumn Property="articlecode => articlecode.ArticleDescription" Title="Beschreibung" Sortable="true" />
+@if (context.MonitorEntries.Any())
+{
+    <QuickGrid Class="table" Items="FilteredArticleCodes" Pagination="state">
+        <PropertyColumn Property="articlecode => articlecode.ArticleNumber" Title="Artikelnummer" Sortable="true">
+            <ColumnOptions>
+                <div>
+                    <input type="search" @bind="titleFilter" @bind:event="oninput" autofocus/>
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>
+        <PropertyColumn Property="articlecode => articlecode.ArticleDescription" Title="Beschreibung" Sortable="true" />
 
-    <TemplateColumn Context="articlecode">
-        <a href="@($"articlecodes/edit?articlenumber={articlecode.ArticleNumber}")">Edit</a>
-        <a href="@($"articlecodes/details?articlenumber={articlecode.ArticleNumber}")">Details</a> 
-        <a href="@($"articlecodes/delete?articlenumber={articlecode.ArticleNumber}")">Delete</a>
-    </TemplateColumn>
-</QuickGrid>
+        <TemplateColumn Context="articlecode">
+            <a href="@($"articlecodes/edit?articlenumber={articlecode.ArticleNumber}")">Edit</a>
+            <a href="@($"articlecodes/details?articlenumber={articlecode.ArticleNumber}")">Details</a> 
+            <a href="@($"articlecodes/delete?articlenumber={articlecode.ArticleNumber}")">Delete</a>
+        </TemplateColumn>
+    </QuickGrid>
 
-<Paginator State="state"/>
+    <Paginator State="state" />
+}
+else
+{
+    <p>Keine Einträge gefunden.</p>
+}
+
 
 @code {
 
