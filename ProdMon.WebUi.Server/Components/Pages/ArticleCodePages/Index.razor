@@ -5,33 +5,49 @@
 @using ProdMon.Infrastructure.Data
 @implements IAsyncDisposable
 @inject IDbContextFactory<ProdMon.Infrastructure.Data.ProdMonDbContext> DbFactory
+@rendermode InteractiveServer
 
 <PageTitle>Index</PageTitle>
 
-<h1>Index</h1>
+<h1>Artikel Nummern</h1>
 
 <p>
     <a href="articlecodes/create">Create New</a>
 </p>
 
-<QuickGrid Class="table" Items="context.ArticleCodes">
-    <PropertyColumn Property="articlecode => articlecode.ArticleNumber" />
-    <PropertyColumn Property="articlecode => articlecode.ArticleDescription" />
+<QuickGrid Class="table" Items="FilteredArticleCodes" Pagination="state">
+    <PropertyColumn Property="articlecode => articlecode.ArticleNumber" Title="Artikelnummer" Sortable="true">
+        <ColumnOptions>
+            <div>
+                <input type="search" @bind="titleFilter" @bind:event="oninput" autofocus/>
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="articlecode => articlecode.ArticleDescription" Title="Beschreibung" Sortable="true" />
 
     <TemplateColumn Context="articlecode">
-        <a href="@($"articlecodes/edit?articlenumber={articlecode.ArticleNumber}")">Edit</a> |
-        <a href="@($"articlecodes/details?articlenumber={articlecode.ArticleNumber}")">Details</a> |
+        <a href="@($"articlecodes/edit?articlenumber={articlecode.ArticleNumber}")">Edit</a>
+        <a href="@($"articlecodes/details?articlenumber={articlecode.ArticleNumber}")">Details</a> 
         <a href="@($"articlecodes/delete?articlenumber={articlecode.ArticleNumber}")">Delete</a>
     </TemplateColumn>
 </QuickGrid>
 
+<Paginator State="state"/>
+
 @code {
+
+    PaginationState state = new PaginationState { ItemsPerPage = 10};
+
+    string titleFilter = "";
+
     private ProdMonDbContext context = default!;
 
     protected override void OnInitialized()
     {
         context = DbFactory.CreateDbContext();
     }
+
+    IQueryable<ArticleCode> FilteredArticleCodes => context.ArticleCodes.Where(ac => ac.ArticleNumber.Contains(titleFilter));
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
 }

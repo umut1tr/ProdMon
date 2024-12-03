@@ -16,6 +16,7 @@ builder.Logging.AddSerilog();
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddServerSideBlazor();
 
 // Retrieve configuration values and check for null
 var filePath = builder.Configuration["FileWatcher:FilePath"];
@@ -54,6 +55,6 @@ app.UseStaticFiles();
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+    .AddInteractiveServerRenderMode(); // Add this line
 
 app.Run();
