@@ -1,4 +1,4 @@
-﻿@page "/monitorentries"
+﻿@page "/new"
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Microsoft.Extensions.Logging
@@ -23,9 +23,9 @@
 
 @if (monitorEntries.Any())
 {
-    <QuickGrid Class="table" Items="monitorEntries.AsQueryable()">
+    <QuickGrid Class="table" Items="context.MonitorEntries">
         <PropertyColumn Property="monitorentry => monitorentry.Dmc" Title="DataMatrix Code" />
-        <TemplateColumn Context="monitorentry" Title="Zeitstempel" Sortable="true">
+        <TemplateColumn Context="monitorentry" Title="Zeitstempel">
             @monitorentry.Timestamp.ToString("dd/MM/yyyy HH:mm:ss")
         </TemplateColumn>
         <PropertyColumn Property="monitorentry => monitorentry.Description" Title="Beschreibung" />
@@ -36,7 +36,12 @@
             <a href="@($"monitorentries/details?dmc={monitorentry.Dmc}")">Details</a> |
             <a href="@($"monitorentries/delete?dmc={monitorentry.Dmc}")">Delete</a>
         </TemplateColumn>
-    </QuickGrid>    
+    </QuickGrid>
+
+    @foreach (var entry in monitorEntries)
+    {
+        <p>@entry.Dmc</p>
+    }
 }
 else
 {
@@ -46,36 +51,47 @@ else
 @code {
     private List<MonitorEntry> monitorEntries = new();
     private ProdMonDbContext context = default!;
+    private System.Timers.Timer? timer;
 
     protected override async Task OnInitializedAsync()
     {
         context = await DbFactory.CreateDbContextAsync();
-
-        // Subscribe to the event
-        FileWatcherService.EntryHasBeenApplied += HandleEntriesChanged;       
-
-        // Load initial data
         await LoadEntriesAsync();
+
+        // Initialize and start the timer
+        timer = new System.Timers.Timer(5000); // 5 seconds
+        timer.Elapsed += async (sender, e) => await TimerElapsed();
+        timer.AutoReset = true;
+        timer.Enabled = true;
+
+        Logger.LogInformation("Timer initialized and started");
+    }
+
+    private async Task TimerElapsed()
+    {
+        await InvokeAsync(async () =>
+        {
+            await LoadEntriesAsync();
+            StateHasChanged();  // Ensure the UI is updated
+            Logger.LogInformation("Timer elapsed, data reloaded");
+        });
     }
 
     private async Task LoadEntriesAsync()
     {
-        monitorEntries = await context.MonitorEntries.ToListAsync();        
-
-        await InvokeAsync(StateHasChanged);  // Ensure the UI is updated
+        monitorEntries = await context.MonitorEntries.ToListAsync();
+        Logger.LogInformation("LoadEntriesAsync has been called");
     }
 
-    private async void HandleEntriesChanged()
+    public async ValueTask DisposeAsync()
     {
-        
-        // Load new data when the event is triggered
-        await LoadEntriesAsync();
-    }
+        Logger.LogInformation("DisposeAsync has been called");
 
-    public async ValueTask DisposeAsync()    {
-        
-        // Unsubscribe from the event
-        FileWatcherService.EntryHasBeenApplied -= HandleEntriesChanged;
+        if (timer != null)
+        {
+            timer.Dispose();
+        }
+
         await context.DisposeAsync();
     }
 }
