@@ -9,11 +9,15 @@ namespace ProdMon.Infrastructure
     public static class DependencyInjection
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, string connectionString)
-        {            
-
+        {
+            // main DB context for use
             services.AddDbContext<ProdMonDbContext>(options =>
-                options.UseSqlServer(connectionString) 
+                options.UseSqlServer(connectionString)
             );
+
+            // Register the IDbContextFactory with scoped lifetime for use on automated generated scaffolded .razor components for CRUD operations
+            services.AddDbContextFactory<ProdMonDbContext>(options =>
+                options.UseSqlServer(connectionString), ServiceLifetime.Scoped);
 
             // Register the DatabaseCheckService
             services.AddScoped<DatabaseCheckService>();
@@ -26,4 +30,3 @@ namespace ProdMon.Infrastructure
         }
     }
 }
- 

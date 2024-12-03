@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace ProdMon.Infrastructure.Migrations
 {
     /// <inheritdoc />
@@ -15,8 +17,7 @@ namespace ProdMon.Infrastructure.Migrations
                 name: "ArticleCodes",
                 columns: table => new
                 {
-                    ArticleNumber = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ArticleNumber = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ArticleDescription = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -37,6 +38,16 @@ namespace ProdMon.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MonitorEntries", x => x.Dmc);
+                });
+
+            migrationBuilder.InsertData(
+                table: "ArticleCodes",
+                columns: new[] { "ArticleNumber", "ArticleDescription" },
+                values: new object[,]
+                {
+                    { "05010292", "Bremsscheibe" },
+                    { "123455", "Test" },
+                    { "55322234", "Querlenker" }
                 });
         }
 

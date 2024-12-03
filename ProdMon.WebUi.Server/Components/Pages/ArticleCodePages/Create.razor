@@ -1,0 +1,44 @@
+﻿@page "/articlecodes/create"
+@using Microsoft.EntityFrameworkCore
+@using ProdMon.Domain.Models
+@inject IDbContextFactory<ProdMon.Infrastructure.Data.ProdMonDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>ArticleCode</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="ArticleCode" OnValidSubmit="AddArticleCode" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="articledescription" class="form-label">ArticleDescription:</label> 
+                <InputText id="articledescription" @bind-Value="ArticleCode.ArticleDescription" class="form-control" aria-required="true"/> 
+                <ValidationMessage For="() => ArticleCode.ArticleDescription" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/articlecodes">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private ArticleCode ArticleCode { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddArticleCode()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.ArticleCodes.Add(ArticleCode);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/articlecodes");
+    }
+}

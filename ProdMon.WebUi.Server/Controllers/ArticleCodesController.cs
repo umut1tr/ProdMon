@@ -22,7 +22,7 @@ public class ArticleCodesController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetArticleCodeByIdAsync(int id)
+    public async Task<IActionResult> GetArticleCodeByIdAsync(string id)
     {
         var articleCode = await _repository.GetByIdAsync(id);
         if (articleCode == null)
@@ -40,7 +40,7 @@ public class ArticleCodesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateArticleCodeAsync(int id, [FromBody] ArticleCode articleCode)
+    public async Task<IActionResult> UpdateArticleCodeAsync(string id, [FromBody] ArticleCode articleCode)
     {
         if (id != articleCode.ArticleNumber)
         {
@@ -52,7 +52,7 @@ public class ArticleCodesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteArticleCodeAsync(int id)
+    public async Task<IActionResult> DeleteArticleCodeAsync(string id)
     {
         var articleCode = await _repository.GetByIdAsync(id);
         if (articleCode == null)

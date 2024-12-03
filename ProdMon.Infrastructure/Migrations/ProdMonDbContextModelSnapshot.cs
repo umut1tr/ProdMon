@@ -17,18 +17,15 @@ namespace ProdMon.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.11")
+                .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("ProdMon.Domain.Models.ArticleCode", b =>
                 {
-                    b.Property<int>("ArticleNumber")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ArticleNumber"));
+                    b.Property<string>("ArticleNumber")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ArticleDescription")
                         .IsRequired()
@@ -37,6 +34,23 @@ namespace ProdMon.Infrastructure.Migrations
                     b.HasKey("ArticleNumber");
 
                     b.ToTable("ArticleCodes");
+
+                    b.HasData(
+                        new
+                        {
+                            ArticleNumber = "55322234",
+                            ArticleDescription = "Querlenker"
+                        },
+                        new
+                        {
+                            ArticleNumber = "123455",
+                            ArticleDescription = "Test"
+                        },
+                        new
+                        {
+                            ArticleNumber = "05010292",
+                            ArticleDescription = "Bremsscheibe"
+                        });
                 });
 
             modelBuilder.Entity("ProdMon.Domain.Models.MonitorEntry", b =>

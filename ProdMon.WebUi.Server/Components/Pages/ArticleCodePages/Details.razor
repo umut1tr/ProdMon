@@ -1,0 +1,46 @@
+﻿@page "/articlecodes/details"
+@using Microsoft.EntityFrameworkCore
+@using ProdMon.Domain.Models
+@inject IDbContextFactory<ProdMon.Infrastructure.Data.ProdMonDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>ArticleCode</h2>
+    <hr />
+    @if (articlecode is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">ArticleDescription</dt>
+            <dd class="col-sm-10">@articlecode.ArticleDescription</dd>
+        </dl>
+        <div>
+            <a href="@($"/articlecodes/edit?articlenumber={articlecode.ArticleNumber}")">Edit</a> |
+            <a href="@($"/articlecodes")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private ArticleCode? articlecode;
+
+    [SupplyParameterFromQuery]
+    private string ArticleNumber { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        articlecode = await context.ArticleCodes.FirstOrDefaultAsync(m => m.ArticleNumber == ArticleNumber);
+
+        if (articlecode is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

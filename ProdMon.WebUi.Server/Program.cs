@@ -1,7 +1,8 @@
-using ProdMon.Application;
+﻿using ProdMon.Application;
 using ProdMon.Infrastructure;
 using ProdMon.WebUi.Server.Components;
 using Serilog;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,9 @@ if (string.IsNullOrEmpty(connectionString))
 builder.Services.AddApplication(filePath, lastCheckedFilePath);
 builder.Services.AddInfrastructure(connectionString);
 
+// Register QuickGrid EntityFramework Adapter
+builder.Services.AddQuickGridEntityFrameworkAdapter();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -42,6 +46,7 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     app.UseHsts();
+    app.UseMigrationsEndPoint();
 }
 
 app.UseHttpsRedirection();

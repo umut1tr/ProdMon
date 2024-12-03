@@ -14,16 +14,29 @@ namespace ProdMon.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
 
+
+
             // Seed some basic Data for ArticleCodes for later testing
 
             modelBuilder.Entity<ArticleCode>().HasData(
                 new ArticleCode
                 {
-                    ArticleNumber = 5322234,
+                    ArticleNumber = "55322234",
                     ArticleDescription = "Querlenker"
+                },
+                new ArticleCode
+                {
+                    ArticleNumber = "123455",
+                    ArticleDescription = "Test"
+                },
+                new ArticleCode
+                {
+                    ArticleNumber = "05010292",
+                    ArticleDescription = "Bremsscheibe"
                 }
-
             );
+
+
         }
 
     }

@@ -1,8 +1,6 @@
-﻿using Application.Interfaces;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ProdMon.Domain.Models;
 using ProdMon.Infrastructure.Data;
-
 
 public class ArticleCodeRepository : IArticleCodeRepository
 {
@@ -18,14 +16,14 @@ public class ArticleCodeRepository : IArticleCodeRepository
         return await _context.ArticleCodes.ToListAsync();
     }
 
-    public async Task<ArticleCode> GetByIdAsync(int id)
+    public async Task<ArticleCode> GetByIdAsync(string id)
     {
         return await _context.ArticleCodes.FindAsync(id);
     }
 
     public async Task AddAsync(ArticleCode articleCode)
     {
-        await _context.ArticleCodes.AddAsync(articleCode);
+        _context.ArticleCodes.Add(articleCode);
         await _context.SaveChangesAsync();
     }
 

@@ -1,0 +1,89 @@
+﻿@page "/articlecodes/edit"
+@using Microsoft.EntityFrameworkCore
+@using ProdMon.Domain.Models
+@inject IDbContextFactory<ProdMon.Infrastructure.Data.ProdMonDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>ArticleCode</h2>
+<hr />
+@if (ArticleCode is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="ArticleCode" OnValidSubmit="UpdateArticleCode" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="ArticleCode.ArticleNumber" value="@ArticleCode.ArticleNumber" />
+                <div class="mb-3">
+                    <label for="articledescription" class="form-label">ArticleDescription:</label>
+                    <InputText id="articledescription" @bind-Value="ArticleCode.ArticleDescription" class="form-control" aria-required="true"/>
+                    <ValidationMessage For="() => ArticleCode.ArticleDescription" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/articlecodes">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private string ArticleNumber { get; set; }
+
+    [SupplyParameterFromForm]
+    private ArticleCode? ArticleCode { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        ArticleCode ??= await context.ArticleCodes.FirstOrDefaultAsync(m => m.ArticleNumber == ArticleNumber);
+
+        if (ArticleCode is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateArticleCode()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(ArticleCode!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!ArticleCodeExists(ArticleCode!.ArticleNumber))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/articlecodes");
+    }
+
+    private bool ArticleCodeExists(string articlenumber)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.ArticleCodes.Any(e => e.ArticleNumber == articlenumber);
+    }
+}
