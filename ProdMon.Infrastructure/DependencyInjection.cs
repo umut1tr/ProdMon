@@ -12,7 +12,7 @@ namespace ProdMon.Infrastructure
         {
             // main DB context for use
             services.AddDbContext<ProdMonDbContext>(options =>
-                options.UseSqlServer(connectionString), ServiceLifetime.Scoped);
+                options.UseSqlServer(connectionString));
 
             // Register the IDbContextFactory with scoped lifetime for use on automated generated scaffolded .razor components for CRUD operations
             services.AddDbContextFactory<ProdMonDbContext>(options =>

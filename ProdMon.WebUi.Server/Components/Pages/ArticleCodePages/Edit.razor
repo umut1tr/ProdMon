@@ -25,7 +25,7 @@ else
                 <ValidationSummary role="alert"/>
                 <input type="hidden" name="ArticleCode.ArticleNumber" value="@ArticleCode.ArticleNumber" />
                 <div class="mb-3">
-                    <label for="articledescription" class="form-label">Arti:</label>
+                    <label for="articledescription" class="form-label">Artikelbeschreibung:</label>
                     <InputText id="articledescription" @bind-Value="ArticleCode.ArticleDescription" class="form-control" aria-required="true"/>
                     <ValidationMessage For="() => ArticleCode.ArticleDescription" class="text-danger" />
                 </div>

@@ -1,0 +1,69 @@
+﻿@page "/monitorentries"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using ProdMon.Application.Interfaces
+@using ProdMon.Domain.Models
+@using ProdMon.Infrastructure.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<ProdMonDbContext> DbFactory
+@inject IFileWatcherService FileWatcherService
+@rendermode InteractiveServer
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="monitorentries/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.MonitorEntries">
+    <PropertyColumn Property="monitorentry => monitorentry.Dmc" Title="DataMatrix Code" />
+    <TemplateColumn Context="monitorentry" Title="Zeitstempel">
+        @monitorentry.Timestamp.ToString("dd/MM/yyyy HH:mm:ss")
+    </TemplateColumn>
+    <PropertyColumn Property="monitorentry => monitorentry.Description" Title="Beschreibung" />
+    <PropertyColumn Property="monitorentry => monitorentry.Quality" Title="Qualitätsmerkmal" />
+    <PropertyColumn Property="monitorentry => monitorentry.CheckPointId" Title="Checkpoint ID" />
+    <TemplateColumn Context="monitorentry">
+        <a href="@($"monitorentries/edit?dmc={monitorentry.Dmc}")">Edit</a> |
+        <a href="@($"monitorentries/details?dmc={monitorentry.Dmc}")">Details</a> |
+        <a href="@($"monitorentries/delete?dmc={monitorentry.Dmc}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private ProdMonDbContext context = default!;
+    private List<MonitorEntry> monitorEntries = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        FileWatcherService.OnChanged += RefreshData;
+        await LoadDataAsync();
+    }
+
+    private async void RefreshData(object? sender, EventArgs e)
+    {
+        await InvokeAsync(async () =>
+        {
+            await LoadDataAsync();
+            StateHasChanged();
+        });
+    }
+
+    private async Task LoadDataAsync()
+    {
+        using var context = await DbFactory.CreateDbContextAsync();
+        monitorEntries = await context.MonitorEntries.ToListAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        FileWatcherService.OnChanged -= RefreshData;
+    }
+}
+
+
+
+
+        

@@ -39,15 +39,20 @@
     {
         try
         {
-            using var context = DbFactory.CreateDbContext();
-            context.ArticleCodes.Add(ArticleCode);
-            await context.SaveChangesAsync();
+            // ensure proper disposing of dbcontext
+            using (var context = DbFactory.CreateDbContext())
+            {
+                context.ArticleCodes.Add(ArticleCode);
+                await context.SaveChangesAsync();
+            }
+
             NavigationManager.NavigateTo("/articlecodes");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"An error occurred: {ex.Message}");
-            // Optionally, display an error message to the user
+           
+            NavigationManager.NavigateTo("/articlecodes");            
         }
     }
+
 }

@@ -48,9 +48,22 @@
 
     private async Task DeleteArticleCode()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.ArticleCodes.Remove(articlecode!);
-        await context.SaveChangesAsync();
-        NavigationManager.NavigateTo("/articlecodes");
+                     
+        try
+        {
+            // ensure proper disposing of dbcontext
+            using (var context = DbFactory.CreateDbContext())
+            {
+                context.ArticleCodes.Remove(articlecode!);
+                await context.SaveChangesAsync();
+            }
+
+            NavigationManager.NavigateTo("/articlecodes");
+        }
+        catch (Exception ex)
+        {
+
+            NavigationManager.NavigateTo("/articlecodes");
+        }
     }
 }
