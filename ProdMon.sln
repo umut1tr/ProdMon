@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProdMon.Infrastructure", "P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProdMon.WebUi.Server", "ProdMon.WebUi.Server\ProdMon.WebUi.Server.csproj", "{3453A73A-058B-4A5B-8714-09408F7D64DB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntryAppender", "EntryAppender\EntryAppender.csproj", "{2A376FCB-8C1A-45B1-A5D9-4E292C4EB62D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{3453A73A-058B-4A5B-8714-09408F7D64DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3453A73A-058B-4A5B-8714-09408F7D64DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3453A73A-058B-4A5B-8714-09408F7D64DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A376FCB-8C1A-45B1-A5D9-4E292C4EB62D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A376FCB-8C1A-45B1-A5D9-4E292C4EB62D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A376FCB-8C1A-45B1-A5D9-4E292C4EB62D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A376FCB-8C1A-45B1-A5D9-4E292C4EB62D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -44,6 +50,7 @@ Global
 		{4BFA8514-AA5E-4706-A959-978E7533DE4C} = {FACCD739-9692-49DB-AAA1-FDFB7BC880F6}
 		{56B26417-D92B-4732-8DEE-BAB01DB5E810} = {FACCD739-9692-49DB-AAA1-FDFB7BC880F6}
 		{3453A73A-058B-4A5B-8714-09408F7D64DB} = {FACCD739-9692-49DB-AAA1-FDFB7BC880F6}
+		{2A376FCB-8C1A-45B1-A5D9-4E292C4EB62D} = {FACCD739-9692-49DB-AAA1-FDFB7BC880F6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F22819E8-E73D-475B-9931-F7C6622632E8}
