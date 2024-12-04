@@ -27,7 +27,7 @@
     {
         <div class="chart-grid-item">
             <h2>@chartData.Key</h2>
-            <MudChart ChartType="ChartType.StackedBar" ChartSeries="@chartData.Value.Series" LegendPosition="@LegendPosition" XAxisLabels="@chartData.Value.XAxisLabels" Width="100%" Height="400px" Class="chart-x-axis-labels" />
+            <MudChart ChartType="ChartType.StackedBar" ChartSeries="@chartData.Value.Series" LegendPosition="@LegendPosition" XAxisLabels="@chartData.Value.XAxisLabels" Width="100%" Height="400px" Class="chart-x-axis-labels" ChartOptions="_options"/>
         </div>
     }
 </div>
@@ -38,6 +38,7 @@
     private Dictionary<string, ChartData> productCharts = new();
     private ProdMonDbContext context = default!;
     private Position LegendPosition = Position.Bottom;
+    ChartOptions _options = new() { ChartPalette = new string[] { "green", "red" } };
 
     protected override async Task OnInitializedAsync()
     {
@@ -99,6 +100,7 @@
                     Data = xAxisLabels.Select((label, index) => hourlyGroups.FirstOrDefault(h => h.Hour == index)?.BadCount ?? 0).Select(count => (double)count).ToArray()
 
                 }
+
             };
 
             productCharts[group.Key] = new ChartData { Series = series, XAxisLabels = xAxisLabels };
