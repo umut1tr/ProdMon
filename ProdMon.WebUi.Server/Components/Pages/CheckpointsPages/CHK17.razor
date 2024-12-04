@@ -1,0 +1,128 @@
+﻿@page "/checkpoints/chk17"
+@using Microsoft.EntityFrameworkCore
+@using ProdMon.Application.Interfaces
+@using ProdMon.Application.Services
+@using ProdMon.Infrastructure.Data
+@using MudBlazor
+@implements IAsyncDisposable
+@inject IFileWatcherService FileWatcherService
+@inject IDbContextFactory<ProdMonDbContext> DbFactory
+
+@inherits LayoutComponentBase
+
+@rendermode InteractiveServer
+
+
+<div style="text-align: center;">
+    <h1>Checkpoint17</h1>
+    <h>24H-Chart</h>
+</div>
+
+<p>
+    <a href="monitorentries/create">Create New</a>
+</p>
+
+<div class="chart-grid">
+    @foreach (var chartData in productCharts)
+    {
+        <div class="chart-grid-item">
+            <h2>@chartData.Key</h2>
+            <MudChart ChartType="ChartType.StackedBar" ChartSeries="@chartData.Value.Series" LegendPosition="@LegendPosition" XAxisLabels="@chartData.Value.XAxisLabels" Width="100%" Height="400px" Class="chart-x-axis-labels" />
+        </div>
+    }
+</div>
+
+
+@code {
+    private List<MonitorEntry> monitorEntries = new();
+    private Dictionary<string, ChartData> productCharts = new();
+    private ProdMonDbContext context = default!;
+    private Position LegendPosition = Position.Bottom;
+
+    protected override async Task OnInitializedAsync()
+    {
+        context = await DbFactory.CreateDbContextAsync();
+
+        // Subscribe to the event
+        FileWatcherService.EntryHasBeenApplied += HandleEntriesChanged;
+
+        // Load initial data
+        await LoadEntriesAsync();
+    }
+
+
+    /// <summary>
+    /// Loads the monitor entries from the database for the last 24 hours and groups them by product description:
+    /// Group by Hour: Further groups data by hour and counts good and bad entries.
+    /// </summary>
+    /// <returns></returns>
+    private async Task LoadEntriesAsync()
+    {
+        monitorEntries = await context.MonitorEntries
+            .Where(entry => entry.Timestamp >= DateTime.Now.AddHours(-24) && entry.Timestamp <= DateTime.Now)
+            .ToListAsync();
+
+        // Group data by product
+        var groupedEntries = monitorEntries
+            .GroupBy(entry => entry.Description)
+            .ToList();
+
+        foreach (var group in groupedEntries)
+        {
+            var hourlyGroups = group
+                .GroupBy(entry => entry.Timestamp.Hour)
+                .Select(g => new
+                {
+                    Hour = g.Key,
+                    GoodCount = g.Count(e => e.Quality == "Gut"),
+                    BadCount = g.Count(e => e.Quality == "Schlecht")
+                })
+                .ToList();
+
+            var xAxisLabels = new string[]
+            {
+                "0-1", "1-2", "2-3", "3-4", "4-5", "5-6", "6-7", "7-8", "8-9", "9-10",
+                "10-11", "11-12", "12-13", "13-14", "14-15", "15-16", "16-17", "17-18", "18-19",
+                "19-20", "20-21", "21-22", "22-23", "23-24"
+            };
+
+            var series = new List<MudBlazor.ChartSeries>
+            {
+                new MudBlazor.ChartSeries
+                {
+                    Name = $"{group.Key} Gut",
+                    Data = xAxisLabels.Select((label, index) => hourlyGroups.FirstOrDefault(h => h.Hour == index)?.GoodCount ?? 0).Select(count => (double)count).ToArray()
+                },
+                new MudBlazor.ChartSeries
+                {
+                    Name = $"{group.Key} Schlecht",
+                    Data = xAxisLabels.Select((label, index) => hourlyGroups.FirstOrDefault(h => h.Hour == index)?.BadCount ?? 0).Select(count => (double)count).ToArray()
+
+                }
+            };
+
+            productCharts[group.Key] = new ChartData { Series = series, XAxisLabels = xAxisLabels };
+        }
+
+        await InvokeAsync(StateHasChanged);  // Ensure the UI is updated
+    }
+
+    private async void HandleEntriesChanged()
+    {
+        // Load new data when the event is triggered
+        await LoadEntriesAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        // Unsubscribe from the event
+        FileWatcherService.EntryHasBeenApplied -= HandleEntriesChanged;
+        await context.DisposeAsync();
+    }
+
+    private class ChartData
+    {
+        public List<MudBlazor.ChartSeries> Series { get; set; } = new List<MudBlazor.ChartSeries>();
+        public string[] XAxisLabels { get; set; } = Array.Empty<string>();
+    }
+}

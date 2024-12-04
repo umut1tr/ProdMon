@@ -23,19 +23,19 @@
 
 @if (monitorEntries.Any())
 {
-    <QuickGrid Class="table" Items="monitorEntries.AsQueryable()">
-        <PropertyColumn Property="monitorentry => monitorentry.Dmc" Title="DataMatrix Code" />
-        <TemplateColumn Context="monitorentry" Title="Zeitstempel" Sortable="true">
+    <QuickGrid Items="monitorEntries.AsQueryable()">
+        <Microsoft.AspNetCore.Components.QuickGrid.PropertyColumn Property="monitorentry => monitorentry.Dmc" Title="DataMatrix Code" />
+        <Microsoft.AspNetCore.Components.QuickGrid.TemplateColumn Context="monitorentry" Title="Zeitstempel" Sortable="true">
             @monitorentry.Timestamp.ToString("dd/MM/yyyy HH:mm:ss")
-        </TemplateColumn>
-        <PropertyColumn Property="monitorentry => monitorentry.Description" Title="Beschreibung" />
-        <PropertyColumn Property="monitorentry => monitorentry.Quality" Title="Qualitätsmerkmal" />
-        <PropertyColumn Property="monitorentry => monitorentry.CheckPointId" Title="Checkpoint ID" />
-        <TemplateColumn Context="monitorentry">
+        </Microsoft.AspNetCore.Components.QuickGrid.TemplateColumn>
+        <Microsoft.AspNetCore.Components.QuickGrid.PropertyColumn Property="monitorentry => monitorentry.Description" Title="Beschreibung" />
+        <Microsoft.AspNetCore.Components.QuickGrid.PropertyColumn Property="monitorentry => monitorentry.Quality" Title="Qualitätsmerkmal" />
+        <Microsoft.AspNetCore.Components.QuickGrid.PropertyColumn Property="monitorentry => monitorentry.CheckPointId" Title="Checkpoint ID" />
+        <Microsoft.AspNetCore.Components.QuickGrid.TemplateColumn Context="monitorentry">
             <a href="@($"monitorentries/edit?dmc={monitorentry.Dmc}")">Edit</a> |
             <a href="@($"monitorentries/details?dmc={monitorentry.Dmc}")">Details</a> |
             <a href="@($"monitorentries/delete?dmc={monitorentry.Dmc}")">Delete</a>
-        </TemplateColumn>
+        </Microsoft.AspNetCore.Components.QuickGrid.TemplateColumn>
     </QuickGrid>    
 }
 else

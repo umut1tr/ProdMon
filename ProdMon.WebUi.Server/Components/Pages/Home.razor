@@ -1,3 +1,34 @@
 ﻿@page "/"
 
-<h1>Checkpoint 17</h1>
+<h1>Für Migration</h1>
+<p>dotnet ef migrations add InitialMigration --project ProdMon.Infrastructure --startup-project ProdMon.WebUi.Server</p>
+
+<h1>Für DB-Update</h1>
+<p>dotnet ef database update --project ProdMon.Infrastructure --startup-project ProdMon.WebUi.Server</p>
+
+<h1>Notwendige Pfade unter appsettings.json aktualisieren</h1>
+<p>"test.json"" und "lastCheckedTimeStamp.txt"</p>
+<p>
+    "FileWatcher": {
+    "FilePath": "F:\\Coding\\ProdMon\\test.json",
+    "LastCheckedFilePath": "F:\\Coding\\ProdMon\\lastCheckedTimeStamp.txt"
+    }
+</p>
+
+<h1>Funktionsweise</h1>
+<p>1. Filewatcher überprüft das File (test.json), welches im Root folder liegt auf änderungen (wird vom Fremdsystem appended) siehe "IFileWatcherSystem.cs -> FileWatcherSystem"</p>
+<p>2. Bei neuen Einträgen wird der neue Eintrag auf das Model "MonitorEntry.cs" gebunden und auf die Datenbank gespielt mit einer extra Spalte "CheckpointID", welches eventuell für spätere Skalierung dienlich ist. Wenn es mehrere Checkpoints geben sollte</p>
+<p>3. Der "IFileWatcherService" ist im FrontEnd in der CHK17.razor komponente injected und sendet ein Signal dorthin um ein neues Rendering der Seite anzustoßen um Live-Daten zu haben.</p>
+<p>4. CHK17.RazorDieser ist verantwortlich für die Erstellung der Charts je nach Produkt wird diese dynamisch erzeugt und angezeigt. unter wwwroot -> site.css gibt es noch eine kleine anpassung für die Visualisierung </p>
+
+<br />
+
+<p>Alle Pages greifen nur über DBContext auf die DB zu</p>
+
+<br />
+
+<p>Optional wäre noch ein Repository pattern angelegt in der Application-Layer über welche die Controller auf die Modelle in die DB zugreifen für "MonitorEntries" und auch "ArticleCodes" (User verwaltung laut Arbeitspaket) via Oberfläche möglich</p>
+<p>/articlecodes/ + CRUD</p>
+<p>/monitorentries/ + CRUD (ungetestet)</p>
+
+<h1>Allgemein gehört sich noch ein sauberes Refactoring und Error Handling</h1>

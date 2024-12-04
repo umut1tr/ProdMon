@@ -16,17 +16,17 @@
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" role="alert"/>
             <div class="mb-3">
-                <label for="timestamp" class="form-label">Timestamp:</label> 
+                <label for="timestamp" class="form-label">Zeitstempel:</label> 
                 <InputDate id="timestamp" @bind-Value="MonitorEntry.Timestamp" class="form-control" aria-required="true"/> 
                 <ValidationMessage For="() => MonitorEntry.Timestamp" class="text-danger" /> 
             </div>        
             <div class="mb-3">
-                <label for="description" class="form-label">Description:</label> 
+                <label for="description" class="form-label">BEschreibung:</label> 
                 <InputText id="description" @bind-Value="MonitorEntry.Description" class="form-control" aria-required="true"/> 
                 <ValidationMessage For="() => MonitorEntry.Description" class="text-danger" /> 
             </div>        
             <div class="mb-3">
-                <label for="quality" class="form-label">Quality:</label> 
+                <label for="quality" class="form-label">Qualität:</label> 
                 <InputText id="quality" @bind-Value="MonitorEntry.Quality" class="form-control" aria-required="true"/> 
                 <ValidationMessage For="() => MonitorEntry.Quality" class="text-danger" /> 
             </div>        
