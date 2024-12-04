@@ -1,7 +1,5 @@
-﻿using Application.Interfaces;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ProdMon.Domain.Models;
-using System.Threading.Tasks;
 
 [ApiController]
 [Route("api/[controller]")]
